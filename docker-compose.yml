@@ -1,0 +1,43 @@
+version: '3.8'
+
+services:
+  # 1. Servicio de nuestra aplicación Spring Boot
+  user-service:
+    build: .
+    container_name: user-service-app
+    ports:
+      - "8080:8080"
+    depends_on:
+      - mongo-db
+    environment:
+      SPRING_DATA_MONGODB_URI: mongodb://${MONGO_INITDB_ROOT_USERNAME}:${MONGO_INITDB_ROOT_PASSWORD}@mongo-db:27017/${SPRING_DATA_MONGODB_DATABASE}?authSource=admin
+    networks:
+      - guias-net
+    env_file:
+      - .env
+    volumes:
+      - D:/Users/chili/keys/clave_de_microservicio_de_usuarios:/app/keys  # Montar el directorio de claves
+
+  # 2. Servicio de MongoDB
+  mongo-db:
+    image: mongo:6.0
+    container_name: mongo-db
+    environment:
+      - MONGO_INITDB_ROOT_USERNAME=${MONGO_INITDB_ROOT_USERNAME}
+      - MONGO_INITDB_ROOT_PASSWORD=${MONGO_INITDB_ROOT_PASSWORD}
+      - MONGO_INITDB_DATABASE=${SPRING_DATA_MONGODB_DATABASE}
+    ports:
+      - "27017:27017"
+    volumes:
+      - mongo_data:/data/db
+    networks:
+      - guias-net
+
+# Volumen para persistencia de datos
+volumes:
+  mongo_data:
+
+# Red interna para comunicación entre servicios
+networks:
+  guias-net:
+    driver: bridge

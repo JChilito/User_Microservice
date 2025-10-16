@@ -1,0 +1,61 @@
+HELP.md
+target/
+.mvn/wrapper/maven-wrapper.jar
+!**/src/main/**/target/
+!**/src/test/**/target/
+
+# Ignorar claves privadas y archivos sensibles
+certs/private.pem
+certs/*.key
+certs/*.pem
+
+# Permitir explícitamente la clave pública si quieres subirla
+!certs/public.pem
+
+# Mantener la carpeta certs vacía en el repo
+!certs/.gitkeep
+
+# Variables de entorno
+.env
+.env.*
+*.env
+
+### STS ###
+.apt_generated
+.classpath
+.factorypath
+.project
+.settings
+.springBeans
+.sts4-cache
+
+### IntelliJ IDEA ###
+.idea
+*.iws
+*.iml
+*.ipr
+
+### NetBeans ###
+/nbproject/private/
+/nbbuild/
+/dist/
+/nbdist/
+/.nb-gradle/
+build/
+!**/src/main/**/build/
+!**/src/test/**/build/
+
+### VS Code ###
+.vscode/
+
+# ==============================
+# 🐳 Docker / Containers
+# ==============================
+
+# Archivos generados en ejecución
+*.log
+docker-compose.override.yml
+tmp/
+logs/
+data/
+*.pid

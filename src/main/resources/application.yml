@@ -1,0 +1,22 @@
+server:
+  port: 8080
+
+spring:
+  application:
+    name: microservicio_usuarios
+
+  data:
+    mongodb:
+      uri: ${SPRING_DATA_MONGODB_URI}
+      database: ${SPRING_DATA_MONGODB_DATABASE:prueba} # valor por defecto si no se pasa
+      auto-index-creation: true
+
+rsa:
+  private-key: file:${PRIVATE_KEY_PATH}
+  public-key: file:${PUBLIC_KEY_PATH}
+
+application:
+  security:
+    jwt:
+      expiration: 2m  # o 900000 milisegundos
+
