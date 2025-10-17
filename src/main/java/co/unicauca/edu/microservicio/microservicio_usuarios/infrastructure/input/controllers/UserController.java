@@ -21,7 +21,7 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 
 @RestController
-@RequestMapping("/api/users")
+@RequestMapping()
 @RequiredArgsConstructor
 public class UserController {
     private final UserManagementIntPort userManagementUseCaseIntPort;
