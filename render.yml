@@ -1,0 +1,19 @@
+# render.yaml - Versión final
+
+# Define los servicios de la aplicación (como tu API)
+services:
+  # 1. Servicio para tu aplicación Spring Boot
+  - name: user-service
+    type: web
+    plan: free
+    runtime: docker # <-- ¡ESTA ES LA LÍNEA QUE FALTABA!
+    buildFilter:
+      paths:
+      - "src/**"
+      - "pom.xml"
+      - "Dockerfile"
+    dockerfilePath: ./Dockerfile
+    envVars:
+      # Variable secreta para MongoDB Atlas (esta no cambia)
+      - key: SPRING_DATA_MONGODB_URI
+        sync: false
