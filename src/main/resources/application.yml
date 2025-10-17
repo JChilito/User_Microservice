@@ -12,7 +12,7 @@ spring:
       auto-index-creation: true
 
 rsa:
-  private-key: file:${PRIVATE_KEY_PATH:/tmp/private.pem}
+  private-key: file:/tmp/private.pem
   public-key: file:${PUBLIC_KEY_PATH}
 
 application:
