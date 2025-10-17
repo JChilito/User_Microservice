@@ -18,5 +18,5 @@ rsa:
 application:
   security:
     jwt:
-      expiration: 2m  # o 900000 milisegundos
+      expiration: 15m  # o 900000 milisegundos
 
