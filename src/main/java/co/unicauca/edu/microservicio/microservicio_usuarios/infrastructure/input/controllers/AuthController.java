@@ -23,7 +23,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 
 
 @RestController
-@RequestMapping()
+@RequestMapping("/api/auth")
 public class AuthController {
     private final AuthIntPort authIntPort;
     private final GetPublicKeyIntPort getPublicKeyIntPort;
