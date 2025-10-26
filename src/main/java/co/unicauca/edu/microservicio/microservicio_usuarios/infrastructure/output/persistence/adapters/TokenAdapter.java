@@ -55,7 +55,7 @@ public class TokenAdapter implements TokenIntPort{
                 .issuedAt(now)
                 .expiresAt(now.plus(jwtExpiration))
                 .subject(authUser.getId())
-                .claim("role", List.of(authUser.getRole().name()))
+                .claim("roles", List.of(authUser.getRole().name()))
                 .build();
 
         return this.encoder.encode(JwtEncoderParameters.from(claims)).getTokenValue();

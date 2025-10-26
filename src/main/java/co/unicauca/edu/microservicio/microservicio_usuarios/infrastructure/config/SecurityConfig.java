@@ -29,7 +29,7 @@ public class SecurityConfig {
     public JwtAuthenticationConverter jwtAuthenticationConverter() {
         JwtGrantedAuthoritiesConverter grantedAuthoritiesConverter = new JwtGrantedAuthoritiesConverter();
         grantedAuthoritiesConverter.setAuthorityPrefix("ROLE_"); // quita el "SCOPE_" por defecto
-        grantedAuthoritiesConverter.setAuthoritiesClaimName("role"); // o "scope" según el claim que uses
+        grantedAuthoritiesConverter.setAuthoritiesClaimName("roles"); // o "scope" según el claim que uses
 
         JwtAuthenticationConverter jwtAuthenticationConverter = new JwtAuthenticationConverter();
         jwtAuthenticationConverter.setJwtGrantedAuthoritiesConverter(grantedAuthoritiesConverter);
