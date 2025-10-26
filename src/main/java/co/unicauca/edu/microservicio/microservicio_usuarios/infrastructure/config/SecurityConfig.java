@@ -28,8 +28,8 @@ public class SecurityConfig {
     @Bean
     public JwtAuthenticationConverter jwtAuthenticationConverter() {
         JwtGrantedAuthoritiesConverter grantedAuthoritiesConverter = new JwtGrantedAuthoritiesConverter();
-        grantedAuthoritiesConverter.setAuthorityPrefix(""); // quita el "SCOPE_" por defecto
-        grantedAuthoritiesConverter.setAuthoritiesClaimName("scope"); // o "role" según el claim que uses
+        grantedAuthoritiesConverter.setAuthorityPrefix("ROLE_"); // quita el "SCOPE_" por defecto
+        grantedAuthoritiesConverter.setAuthoritiesClaimName("role"); // o "scope" según el claim que uses
 
         JwtAuthenticationConverter jwtAuthenticationConverter = new JwtAuthenticationConverter();
         jwtAuthenticationConverter.setJwtGrantedAuthoritiesConverter(grantedAuthoritiesConverter);
@@ -46,7 +46,9 @@ public class SecurityConfig {
                     auth.requestMatchers("/api/users/**").authenticated();
                 })
                 .oauth2ResourceServer(oauth2 -> oauth2
-                        .jwt(jwt -> jwt.decoder(jwtDecoder)) // Configura el decodificador JWT
+                        .jwt(jwt -> jwt
+                        .decoder(jwtDecoder)
+                        .jwtAuthenticationConverter(jwtAuthenticationConverter())) // Configura el decodificador JWT
                 );
         return http.build();
     } 
