@@ -1,11 +1,12 @@
 package co.unicauca.edu.microservicio.microservicio_usuarios.infrastructure.config;
 
 import java.util.Arrays;
-
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
+import org.springframework.security.config.annotation.web.builders.HttpSecurity; // Asegúrate de importar este
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
+import org.springframework.security.config.http.SessionCreationPolicy; // <-- ¡IMPORTAR ESTO!
 import org.springframework.security.oauth2.jwt.JwtDecoder;
 import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationConverter;
 import org.springframework.security.oauth2.server.resource.authentication.JwtGrantedAuthoritiesConverter;
@@ -14,11 +15,9 @@ import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
-import jakarta.servlet.http.HttpServletRequest;
-
 @Configuration
 @EnableWebSecurity
-@EnableMethodSecurity // Habilita la seguridad a nivel de método (@PreAuthorize)
+@EnableMethodSecurity
 public class SecurityConfig {
 
     private final JwtDecoder jwtDecoder;
@@ -30,8 +29,10 @@ public class SecurityConfig {
     @Bean
     public JwtAuthenticationConverter jwtAuthenticationConverter() {
         JwtGrantedAuthoritiesConverter grantedAuthoritiesConverter = new JwtGrantedAuthoritiesConverter();
-        grantedAuthoritiesConverter.setAuthorityPrefix("ROLE_"); // quita el "SCOPE_" por defecto
-        grantedAuthoritiesConverter.setAuthoritiesClaimName("roles"); // o "scope" según el claim que uses
+
+        grantedAuthoritiesConverter.setAuthorityPrefix(""); 
+        
+        grantedAuthoritiesConverter.setAuthoritiesClaimName("scope"); 
 
         JwtAuthenticationConverter jwtAuthenticationConverter = new JwtAuthenticationConverter();
         jwtAuthenticationConverter.setJwtGrantedAuthoritiesConverter(grantedAuthoritiesConverter);
@@ -39,61 +40,38 @@ public class SecurityConfig {
     }
     
     @Bean
-    public SecurityFilterChain securityFilterChain(org.springframework.security.config.annotation.web.builders.HttpSecurity http) throws Exception {
+    public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
-                .cors(cors -> cors.configurationSource(corsConfigurationSource()))
-                .csrf(csrf -> csrf.disable())
-                .authorizeHttpRequests(auth -> {
-                    auth.requestMatchers("/api/auth/**").permitAll();
-                    auth.requestMatchers("/api/users/**").authenticated();
-                })
-                .oauth2ResourceServer(oauth2 -> oauth2
-                        .jwt(jwt -> jwt
-                        .decoder(jwtDecoder)
-                        .jwtAuthenticationConverter(jwtAuthenticationConverter())) // Configura el decodificador JWT
-                );
-
-                http.addFilterBefore((request, response, chain) -> {
-                    HttpServletRequest httpRequest = (HttpServletRequest) request;
-                    String authHeader = httpRequest.getHeader("Authorization");
-                    System.out.println("🔐 Authorization header: " + (authHeader != null ? authHeader : "NO PRESENTE"));
-    chain.doFilter(request, response);
-}, org.springframework.security.web.authentication.AnonymousAuthenticationFilter.class);
-
+            .cors(cors -> cors.configurationSource(corsConfigurationSource()))
+            .csrf(csrf -> csrf.disable())
             
-                // Log para depurar roles
-    http.addFilterAfter((request, response, chain) -> {
-        var auth = org.springframework.security.core.context.SecurityContextHolder.getContext().getAuthentication();
-        if (auth != null) {
-            System.out.println("➡️ Usuario autenticado: " + auth.getName());
-            System.out.println("➡️ Authorities: " + auth.getAuthorities());
-        }
-        chain.doFilter(request, response);
-    }, org.springframework.security.web.authentication.AnonymousAuthenticationFilter.class);
-    
+            .sessionManagement(session -> 
+                session.sessionCreationPolicy(SessionCreationPolicy.STATELESS)
+            )
+            
+            .authorizeHttpRequests(auth -> {
+                auth.requestMatchers("/api/auth/**").permitAll();
+                auth.requestMatchers("/api/users/**").authenticated();
+            })
+            .oauth2ResourceServer(oauth2 -> oauth2
+                .jwt(jwt -> jwt
+                    .decoder(jwtDecoder)
+                    .jwtAuthenticationConverter(jwtAuthenticationConverter())
+                )
+            );
+        
         return http.build();
     } 
 
-    @Bean
+     @Bean
     CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration config = new CorsConfiguration();
-
-        // 🔹 Dominio permitido
         config.setAllowedOrigins(Arrays.asList("https://api-gateway-wi8c.onrender.com"));
-
-        // 🔹 Métodos HTTP permitidos
         config.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "OPTIONS"));
-
-        // 🔹 Headers permitidos en la solicitud
         config.setAllowedHeaders(Arrays.asList("Authorization", "Content-Type"));
-
-        // 🔹 Permitir enviar cookies o cabeceras de autorización
         config.setAllowCredentials(true);
-
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
         source.registerCorsConfiguration("/**", config);
         return source;
     }
-
-
 }
