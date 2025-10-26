@@ -52,13 +52,6 @@ public class AuthService implements AuthIntPort {
         String encodedPassword = passwordEncoderIntPort.encode(user.getPassword());
         user.setPassword(encodedPassword);
 
-        System.out.println("Estado del usuario en el Servicio del Auth:");
-        System.out.println("Username: " + user.getUsername());
-        System.out.println("Email: " + user.getEmail());
-        System.out.println("Rol: " + user.getRole());
-        System.out.println("Contraseña: " + user.getLastName());
-        System.out.println("Estado: " + user.getLastName());
-
         return userManagementPersistenceIntPort.saveUser(user);
     }
 

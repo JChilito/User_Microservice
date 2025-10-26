@@ -1,5 +1,6 @@
 package co.unicauca.edu.microservicio.microservicio_usuarios.infrastructure.output.persistence.adapters;
 
+import java.util.List;
 import java.time.Duration;
 import java.time.Instant;
 import java.util.Optional;
@@ -54,7 +55,7 @@ public class TokenAdapter implements TokenIntPort{
                 .issuedAt(now)
                 .expiresAt(now.plus(jwtExpiration))
                 .subject(authUser.getId())
-                .claim("role", authUser.getRole().name())
+                .claim("role", List.of(authUser.getRole().name()))
                 .build();
 
         return this.encoder.encode(JwtEncoderParameters.from(claims)).getTokenValue();

@@ -42,7 +42,7 @@ public class AuthController {
         System.out.println("Usuario del controlador: ");
         System.out.println(user.getName());
         System.out.println(user.getEmail());
-        System.out.println(user.getUsername());
+        System.out.println(user.getRole().name());
 
         User createdUser = authIntPort.createUser(user);
         UserDTOResponse userDTOResponse = objMapper.toDTO(createdUser);
