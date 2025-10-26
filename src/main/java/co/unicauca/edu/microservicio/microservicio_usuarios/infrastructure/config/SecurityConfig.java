@@ -50,6 +50,17 @@ public class SecurityConfig {
                         .decoder(jwtDecoder)
                         .jwtAuthenticationConverter(jwtAuthenticationConverter())) // Configura el decodificador JWT
                 );
+            
+                // Log para depurar roles
+    http.addFilterAfter((request, response, chain) -> {
+        var auth = org.springframework.security.core.context.SecurityContextHolder.getContext().getAuthentication();
+        if (auth != null) {
+            System.out.println("➡️ Usuario autenticado: " + auth.getName());
+            System.out.println("➡️ Authorities: " + auth.getAuthorities());
+        }
+        chain.doFilter(request, response);
+    }, org.springframework.security.web.authentication.AnonymousAuthenticationFilter.class);
+    
         return http.build();
     } 
 
