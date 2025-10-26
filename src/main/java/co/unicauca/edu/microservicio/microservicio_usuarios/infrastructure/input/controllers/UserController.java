@@ -28,7 +28,7 @@ public class UserController {
     private final UserMapperInfrastructureDomain objMapper;
 
     @GetMapping()
-    @PreAuthorize("hasRole('ADMINISTRATOR')")
+    @PreAuthorize("hasAuthority('ADMINISTRATOR')")
     //@PreAuthorize("hasAnyRole('ADMINISTRATOR','CLIENT')")
     public ResponseEntity<List<UserDTOResponse>> getAllUsers() {
         List<User> users = userManagementUseCaseIntPort.getAllUsers();
@@ -37,7 +37,7 @@ public class UserController {
     }
 
     @GetMapping("/{id}")
-    @PreAuthorize("hasAnyRole('ADMINISTRATOR','CLIENT','TOURIST_GUIDE')")
+    @PreAuthorize("hasAnyAuthority('ADMINISTRATOR','CLIENT','TOURIST_GUIDE')")
     public ResponseEntity<UserDTOResponse> getUserById(@PathVariable String id) {
         User user = userManagementUseCaseIntPort.getUserById(id);
         UserDTOResponse userDTO = objMapper.toDTO(user);
@@ -45,7 +45,7 @@ public class UserController {
     }
 
     @PutMapping("/{id}")
-    @PreAuthorize("hasAnyRole('ADMINISTRATOR','CLIENT','TOURIST_GUIDE')")
+    @PreAuthorize("hasAnyAuthority('ADMINISTRATOR','CLIENT','TOURIST_GUIDE')")
     public ResponseEntity<UserDTOResponse> updateUser(@PathVariable String id, @RequestBody UserDTORequest userDTORequest) {
         User user = objMapper.toDomain(userDTORequest);
         User updatedUser = userManagementUseCaseIntPort.updateUser(id, user);
@@ -54,7 +54,7 @@ public class UserController {
     }
 
     @DeleteMapping("/{id}")
-    @PreAuthorize("hasRole('ADMINISTRATOR')")
+    @PreAuthorize("hasAuthority('ADMINISTRATOR')")
     public ResponseEntity<Void> deleteUser(@PathVariable String id) {
         userManagementUseCaseIntPort.deleteUser(id);
         return ResponseEntity.noContent().build();
