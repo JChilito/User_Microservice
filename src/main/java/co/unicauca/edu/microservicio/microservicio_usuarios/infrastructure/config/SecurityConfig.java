@@ -14,6 +14,8 @@ import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
+import jakarta.servlet.http.HttpServletRequest;
+
 @Configuration
 @EnableWebSecurity
 @EnableMethodSecurity // Habilita la seguridad a nivel de método (@PreAuthorize)
@@ -50,6 +52,14 @@ public class SecurityConfig {
                         .decoder(jwtDecoder)
                         .jwtAuthenticationConverter(jwtAuthenticationConverter())) // Configura el decodificador JWT
                 );
+
+                http.addFilterBefore((request, response, chain) -> {
+                    HttpServletRequest httpRequest = (HttpServletRequest) request;
+                    String authHeader = httpRequest.getHeader("Authorization");
+                    System.out.println("🔐 Authorization header: " + (authHeader != null ? authHeader : "NO PRESENTE"));
+    chain.doFilter(request, response);
+}, org.springframework.security.web.authentication.AnonymousAuthenticationFilter.class);
+
             
                 // Log para depurar roles
     http.addFilterAfter((request, response, chain) -> {
